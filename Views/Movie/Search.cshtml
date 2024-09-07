@@ -1,0 +1,102 @@
+﻿@model List<MovieSearch.Models.Movie>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Search</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f4f7;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+        }
+
+        .card-img-top {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .card-text {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <form method="get" action="/Movie/Search" class="form-inline mb-4">
+            <input type="text" name="query" class="form-control mr-sm-2" placeholder="Search for a movie..." required />
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger">
+                @ViewBag.Error
+            </div>
+        }
+
+        @if (Model != null && Model.Count > 0)
+        {
+            <div class="row">
+                @foreach (var movie in Model)
+                {
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            @if (!string.IsNullOrEmpty(movie.PosterPath))
+                            {
+                                <img src="@movie.PosterPath" class="card-img-top" alt="Movie Poster" />
+                            }
+                            <div class="card-body">
+                                <h5 class="card-title">@movie.Title</h5>
+                                <p class="card-text"><strong>Release Date:</strong> @movie.ReleaseDate</p>
+                                <p class="card-text"><strong>Overview:</strong> @movie.Overview</p>
+                                <p class="card-text"><strong>Rating:</strong> @movie.Rating</p>
+
+                                <!-- Streaming Links -->
+                                <div class="mt-3">
+                                    <p><strong>Watch On:</strong></p>
+                                    @foreach (var link in movie.StreamingLinks)
+                                    {
+                                        <a href="@link.Value" target="_blank" class="btn btn-outline-primary btn-sm">@link.Key</a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else if (ViewBag.Error == null)
+        {
+            <p>No movies found for your search.</p>
+        }
+    </div>
+</body>
+</html>
